@@ -1,6 +1,6 @@
 package 자바1000제;
 
-import java.io.File;
+import java.io.*;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -13,6 +13,7 @@ import java.util.regex.*;
  * 문제4: 사용자 입력을 받는 프로프트에 현재 작업중인 폴더(디렉토리)의 경로를 표시하는 예제의 코드를 완성하여라
  * 문제5: 현재 디렉토리의 파일과 디렉토리의 목록을 보여주는 명령어 dir을 구현하여라. dir만 입력하면 모든 파일과 디렉토리를, dir *ex?.*와 같이 패턴을 입력하면 패턴과 일치하는 파일 또는 디렉터리의 목록을 보여줘야한다.
  *       (패턴에서 '*'와'?'는 와일드 카드로 '*'는 임의의 여러 글자가 올 수 있으며, '?'는 임의의 한 글자를 의미한다.)
+ * 문제6: 지정된 파일의 내용을 보여주는 type명령을 구현하라. type명령의 형식은 'type FILE_NAME'이며, FILE_NAME으로 지정된 파일을 찾아서 그 내용을 화면에 보여줘야한다.
  */
 public class ConsoleEx1 {
     static Scanner sc = new Scanner(System.in);
@@ -66,6 +67,8 @@ public class ConsoleEx1 {
                     history();
                 } else if(command.equals("dir")){
                     dir();
+                } else if (command.equals("type")){
+                    type();
                 } else {
                     for (String value : argArr) {
                         System.out.println(value);
@@ -77,6 +80,50 @@ public class ConsoleEx1 {
             }
         }//while(true)
     }//main
+
+    private static void type() throws IOException {
+        if (argArr.length != 2){
+            System.out.println("Usage : type FILE_NAME");
+            return;
+        }
+
+        String fileName = argArr[1];
+
+        File tmp = new File(fileName);
+        /*
+            1.파일(tmp)가 존재하는지 확인하고,
+              1-1. 존재하면 파일의 내용을 화면에 출력한다.(FileReader와 BufferdReader를 사용)
+              1-2. 존재하지 않으면, 존재하지 않는 파일이라고 출력한다.
+         */
+
+
+
+        //type메서드 첫번쨰 방법
+//        for (int i=0; i<curDir.listFiles().length; i++) {
+//            if (fileName.equals(curDir.listFiles()[i].getName())){
+//                BufferedReader br = new BufferedReader(new FileReader(curDir.listFiles()[i]));
+//                String line = null;
+//                while((line = br.readLine()) != null){
+//                    System.out.println(line);
+//                }
+//                br.close();
+//            }
+//        }
+
+        //type메서드 두번쨰 방법
+        if (tmp.exists()){
+            BufferedReader br = new BufferedReader(new FileReader(tmp));
+
+            String line = null;
+            while((line = br.readLine()) != null){
+                System.out.println(line);
+            }
+            br.close();
+        }else
+            System.out.println(fileName+" 는/은 존재하지 않는 파일입니다.");
+
+
+    }
 
     private static void dir() {
         String pattern = "";
