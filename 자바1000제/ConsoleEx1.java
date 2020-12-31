@@ -5,12 +5,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
-
+import java.util.regex.*;
 /**
  * 문제1: 예제를 실행하면 '>>' 와 같은 프롬프트가 나타나서 사용자의 입력을 기다리고, 사용자가 입력한 내용을 화면에 출력한다. 만일 사용자가 'q' or 'Q'를 입력하면 프로그램을 종료한다.
  * 문제2: 사용자가 입력한 명령라인을 공백(' ')을 구분자로 해서 잘라서 배열에 저장한 다음에 배열의 내용을 출력하는 예제 코드를 완성하여라.
  * 문제3: 사용자가 입력한 명령라인의 내용을 저장하는 save(String input)메서드와 사용자가 입력한 명령라인의 이력을 보여주는 history()메서드를 완성하시오.
  * 문제4: 사용자 입력을 받는 프로프트에 현재 작업중인 폴더(디렉토리)의 경로를 표시하는 예제의 코드를 완성하여라
+ * 문제5: 현재 디렉토리의 파일과 디렉토리의 목록을 보여주는 명령어 dir을 구현하여라. dir만 입력하면 모든 파일과 디렉토리를, dir *ex?.*와 같이 패턴을 입력하면 패턴과 일치하는 파일 또는 디렉터리의 목록을 보여줘야한다.
+ *       (패턴에서 '*'와'?'는 와일드 카드로 '*'는 임의의 여러 글자가 올 수 있으며, '?'는 임의의 한 글자를 의미한다.)
  */
 public class ConsoleEx1 {
     static Scanner sc = new Scanner(System.in);
@@ -40,35 +42,148 @@ public class ConsoleEx1 {
 
                 //1.화면으로부터 라인단위로 입력받는다.
                 String userValue = sc.nextLine();
+                if (userValue.equals(""))
+                    continue;
 
                 save(userValue);
                 //1-1. 입력받은 값에서 앞뒤 공백을 제거한다.(String클래스의 trim()사용)
                 String returnValue = userValue.trim().replaceAll(" +", " ");
 
-                if (userValue.equals(""))
-                    continue;
-
-                userValue = userValue.toLowerCase();// 사용자가 입력한 문자열을 소물자로 변경
-
                 //1-2. 입력받은 명령라인의 내용을 공백을 구분자로 해서 나눠서 argArr에 담는다. String클래스의 split(String regex)를 사용 - 공백이 하나 이상인 경우에도 하나의 공백으로 간주해야한다.
                 argArr = returnValue.split(" ");
 
 
+
+                String command = argArr[0].toLowerCase();// 사용자가 입력한 문자열에서 공백을 제거하고 제일 앞부분 문자를 소물자로 변경
+
+
+
+
                 //2.q or Q를 입력하면 실행 종료한다.
-                if (userValue.equalsIgnoreCase("q")) {
+                if (command.equalsIgnoreCase("q")) {
                     System.exit(0);
-                } else if (userValue.equals("history")) {
+                } else if (command.equals("history")) {
                     history();
+                } else if(command.equals("dir")){
+                    dir();
                 } else {
                     for (String value : argArr) {
                         System.out.println(value);
                     }
                 }
             }catch (Exception e){
+                e.printStackTrace();
                 System.out.println("입력오류입니다.");
             }
         }//while(true)
     }//main
+
+    private static void dir() {
+        String pattern = "";
+
+        switch(argArr.length) {
+            case 1 :  // dir만 입력한 경우 현재 디렉토리의 모든 파일과 디렉토리를 보여준다.
+
+                        /*
+
+                            다음의 코드를 완성하세요.
+
+                            1. 반복문을 이용해서 현재디렉토리의 모든 파일의 목록을 출력한다.(File클래스의 listFiles()사용)
+
+                            2. 조건문을 같이 사용해서 디렉토리(폴더)인 경우, 이름의 앞뒤에 '[' 와 ']'를 붙여서 출력한다.
+
+                                (File클래스의 isDirectory()를 사용해서 체크)
+
+'                       */
+
+                /**
+                 * 재귀로 다시 구현하
+                 */
+                for (File f : curDir.listFiles()) {
+                    if (f.isDirectory()){
+                        System.out.println("[" + f.getName() + "]");
+                        String newPath = curDir.getPath() + "/" + f.getName();
+                        File sec = new File(newPath);
+                        if (newPath.length() > 0){
+                            for (File f2 : sec.listFiles()) {
+                                if (f2.isDirectory()) {
+                                    System.out.println("   [" + f2.getName() + "]");
+                                }else {
+                                    System.out.println("   "+f2.getName());
+                                }
+                            }
+                        }
+                    }else {
+                        System.out.println(f.getName());
+                    }
+                }
+                break;
+            case 2 :  // dir과 패턴을 같이 입력한 경우, 예를 들면 dir *.class
+                pattern = argArr[1];
+                pattern = pattern.toUpperCase(); // 패턴에서 대소문자를 구별하지 않도록 대문자로 변경한다.
+
+
+
+                /*
+
+                   다음의 코드를 완성하세요.
+
+                   1. 입력된 패턴(pattern)을 정규식 표현(Regular Expression)에 알맞게 치환한다.
+
+                       String클래스의 String replace(CharSequence target, CharSequence replacement)를 사용하자.
+
+                       예를 들면, pattern = pattern.replace("A","AA")는 pattern의 "A"를 "AA"로 치환한다.
+
+
+
+                   2. 반복문을 이용해서 현재 디렉토리 중, 입력된 패턴과 일치하는 것들만 출력한다.
+
+                      이때, 조건문을 같이 사용해서 디렉토리(폴더)인 경우, 이름의 앞뒤에 '[' 와 ']'를 붙여서 출력한다.
+
+                      (File클래스의 isDirectory()를 사용해서 체크)
+
+
+
+                      대소문자구별을 하지 않기 위해서, 패턴과 마찬가지로 파일이나 디렉토리명을 대문자로 변경해야한다.
+
+                      String tmp = f.getName().toUpperCase();
+               */
+
+                pattern = argArr[1];
+//                pattern = pattern.toUpperCase();
+                pattern = pattern.replace(".","\\.");
+                pattern = pattern.replace("*"," *");
+                pattern = pattern.replace("?","{1}");
+
+//                Pattern p = Pattern.compile(pattern);
+
+                String newPath = curDir+"/"+"src";
+
+                File sec = new File(newPath);
+
+                for (File f : sec.listFiles()){
+                    String tmp ="";
+                    if (f.getName().contains("."))
+                        tmp = f.getName().substring(f.getName().indexOf("."));
+//                    Matcher m = p.matcher(tmp);
+                    boolean flag = Pattern.matches(pattern,tmp);
+
+                    if (flag){
+                        if (f.isDirectory()) {
+                            System.out.println("[" + f.getName() + "]");
+                        }else {
+                            System.out.println(f.getName());
+                        }
+                    }
+                }
+
+
+
+                break;
+            default :
+                System.out.println("USAGE : dir [FILENAME]");
+        } // switch
+    }
 
 
     /**
