@@ -20,6 +20,7 @@ import java.util.regex.*;
  *       FILE_NAME - KEYWORD가 포함된 내용을 찾을 파일(console*.*과 같은 패턴 지원하지 않음)
  * 문제8: 문제7에서 구현한 find에 패턴을 지원하도록 기능을 확장한 find2 명령어를 구현하라.
  *       find는 하나의 파일에 대해서만 찾기가 가능했지만, find2는 'find2 if *.java' 와 같이 패턴을 이용해서 여러파일에 대한 찾기가 가능해야한다.
+ * 문제9: 디렉토리를 변경하는 cd명령을 구현하라. 명령어의 형식은 'cd DIRECTORY'이며 DIRECTORY는 현재 디렉토리의 하위 디렉토리이거나 현재 디렉토리를 의미하는 '.'또는 조상 디렉토리를 의미하는 '..'이 될 수 있다.
  */
 public class ConsoleEx1 {
     static Scanner sc = new Scanner(System.in);
@@ -79,6 +80,8 @@ public class ConsoleEx1 {
                     find();
                 } else if (command.equals("find2")){
                     find2();
+                } else if (command.equals("cd")){
+                  cd();
                 } else {
                     for (String value : argArr) {
                         System.out.println(value);
@@ -90,6 +93,48 @@ public class ConsoleEx1 {
             }
         }//while(true)
     }//main
+
+    private static void cd() {
+        if (argArr.length == 1){
+            System.out.println(curDir);
+            return;
+        }else if (argArr.length > 2) {
+            System.out.println("USAGE : cd directory");
+            return;
+        }
+
+        String subDir = argArr[1];
+
+        /*
+            다음의 코드를 완성하세요.
+            1.입력된 디렉토리(subDir)가 ".."이면,
+                1.1 현재 디렉토리의 조상 디렉토리를 얻어서 현재 디렉토리로 지정한다.(File클래스의 getParentFile()을 사용.)
+            2.입력된 디렉토리(subDir)가 "."이면, 단순히 현재 디렉토리의 경로를 화면에 출력한다.
+            3. 1 또는 2의 경우가 아니면, 입력된 디렉토리(subDir)가 현재 디렉토리의 하위디렉토리인지 확인한다.
+                3.1 확인결과가 true이면, 현재 디렉토리(curDir)을 입력된 디렉토리(subDir)로 변경한다.
+                3.2 확인결과가 fasle이면, "유효하지 않은 디렉토리입니다."고 화면에 출력한다.
+         */
+
+        if (subDir.equals("..")){
+            File parentFile = curDir.getParentFile();
+            if (parentFile == null){
+                System.out.println("최상위 파일입니다.");
+                return;
+            }
+            curDir = parentFile;
+        }else if (subDir.equals(".")){
+            System.out.println(curDir);
+        }else {
+            File f = new File(subDir);
+            if (f.exists() && f.isDirectory()) {
+                String newPath = curDir + "/" +subDir;
+                curDir = new File(newPath);
+            }else {
+                System.out.println("유효하지 않은 디렉토리 입니다.");
+                return;
+            }
+        }
+    }
 
     private static void find2() throws IOException {
         if (argArr.length != 3){
@@ -173,7 +218,7 @@ public class ConsoleEx1 {
         String keyword = argArr[1];
         String fileName = argArr[2];
 
-        File tmp = new File(fileName);
+        File tmp = new File(curDir+"/"+fileName);
 
         /*
             다음의 코드를 완성하세요.
