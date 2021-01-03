@@ -1,9 +1,11 @@
 package 자바1000제;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+import java.util.Scanner;
 
 
 /**
@@ -19,6 +21,7 @@ import java.util.List;
  * [문제6] 데이터를 적절한 크기에 맞춰 정렬하는 format 메서드를 완성하고, 이 메서드를 이용해서 화면에 데이터를 실행결과와 같이 줄맞춰 출력하세요.
  *        String format(String str, int length, int alignment) - 주어진 문자열(str)을 지정된 길이(length)에 맞게 정렬(alignment)한다.
  *        예를 들어 format("이름",6,CENTER)의 결과는 " 이름 "이 된다.
+ * [문제7] 파일(score_data.txt)로 부터 데이터를 읽어서 list에 저장한 다음에 전교등수와 반등수를 계산하여 출력하여라.
  */
 public class SumgJukEx1 {
 
@@ -61,7 +64,37 @@ public class SumgJukEx1 {
         System.out.println("[반등수를 정렬하여 나타내기]");
         calculateClassRank(list);
         printList(list);
-    }
+
+        Scanner sc = null;
+        try {
+            sc = new Scanner(new File(args[0]));
+        } catch (FileNotFoundException e) {
+            System.out.println(args[0]+"- 지정하신 파일을 찾을 수 없습니다.");
+            System.exit(0);
+        }
+
+        String line = "";
+        while (sc.hasNextLine()){
+            line = sc.nextLine();
+            Scanner sc2 = new Scanner(line).useDelimiter(",");
+            int count = 0;
+            String name = sc2.next();
+            int classNo = sc2.nextInt();
+            int studentNo = sc2.nextInt();
+            int korean = sc2.nextInt();
+            int math = sc2.nextInt();
+            int english = sc2.nextInt();
+
+            list.add(new Student(name,classNo,studentNo,korean,math,english));
+            }
+
+        calculateSchoolRank(list);
+        calculateClassRank(list);
+        printList(list);
+
+        }
+
+
 
     private static void calculateClassRank(ArrayList<Student> list) {
         Collections.sort(list, new ClassTotalComparator()); // 먼저 반별 총점기준 내림차순으로 정렬한다.
