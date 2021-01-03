@@ -18,6 +18,8 @@ import java.util.regex.*;
  *       명령어의 형식은 'find KEYWORD FILE_NAME' 이며 , 형식에 맞지 않을때는 사용법을 보여준다.
  *       KEYWORD - 지정된 파일에서 찾기 원하는 문자열
  *       FILE_NAME - KEYWORD가 포함된 내용을 찾을 파일(console*.*과 같은 패턴 지원하지 않음)
+ * 문제8: 문제7에서 구현한 find에 패턴을 지원하도록 기능을 확장한 find2 명령어를 구현하라.
+ *       find는 하나의 파일에 대해서만 찾기가 가능했지만, find2는 'find2 if *.java' 와 같이 패턴을 이용해서 여러파일에 대한 찾기가 가능해야한다.
  */
 public class ConsoleEx1 {
     static Scanner sc = new Scanner(System.in);
@@ -75,6 +77,8 @@ public class ConsoleEx1 {
                     type();
                 } else if(command.equals("find")){
                     find();
+                } else if (command.equals("find2")){
+                    find2();
                 } else {
                     for (String value : argArr) {
                         System.out.println(value);
@@ -86,6 +90,79 @@ public class ConsoleEx1 {
             }
         }//while(true)
     }//main
+
+    private static void find2() throws IOException {
+        if (argArr.length != 3){
+            System.out.println("USAGE : find2 KEYWORD FILE_NAME");
+            return;
+        }
+
+        String keyword = argArr[1];
+        String pattern = argArr[2];
+
+
+        pattern = pattern.replace(".","\\.");// \. -> .을 의미한다.
+        pattern = pattern.replace("*",".*");// \가 없는 .은 임의의 한 문자를 의미한다. 또한 *은 앞 문자가 없을 수도 무한정 많을 수 도 있다.
+        pattern = pattern.replace("?","{1}");
+        //*\.txt
+        Pattern p = Pattern.compile(pattern); //compile(String regex) : 주어진 정규표현식으로부터 패턴을 만듭니다.
+
+
+        /*
+            다음의 코드를 완성하여라.
+            1. 입력된 패턴(pattern)을 정규식 표현(Regular Expression)에 알맞게 치환한다.
+               String 클래스의 String replace(CharSequence target, CharSequence replacement)를 사용하자.
+               예를 들면 pattern = pattern.replace("A","AA")는 pattern의 "A"를 "AA"로 치환한다.
+
+            2. 반복문을 이용해서 현재 디렉토리 중, 입력된 패턴과 일치하는 것들에 대해서,
+               2.1 반복문을 이용해서 라인별로 읽어서 keyword가 포함되었는지 확인한다.(BufferedReader의 readLine() 사용.)
+               2.2 keyword가 포함된 라인을 발견하면, 라인번호와 함께 해당 라인을 화면에 출력한다.
+         */
+
+
+        //find2() 첫 번쨰 방법
+        for (File f : curDir.listFiles()) {
+            if (!(f.isDirectory())) {
+                BufferedReader br = new BufferedReader(new FileReader(f));
+                String tmp = f.getName();
+                int count = 1;
+                String line = null;
+                if (tmp.matches(pattern)) {
+                    System.out.println("------------"+f.getName());
+                    while ((line = br.readLine())!=null) {
+                        count++;
+                        if (line.contains(keyword))
+                            System.out.println(count + " " + line);
+                    }
+                }
+            }
+
+        }
+
+        //find2() 두 번쨰 방법
+//        for (File f : curDir.listFiles()){
+//            String tmp = f.getName();
+//            Matcher m = p.matcher(tmp);
+//
+//            if (m.matches()) {
+//                if (f.isDirectory())
+//                    continue;
+//                BufferedReader br = new BufferedReader(new FileReader(f));
+//                String line = null;
+//                int count = 1;
+//                System.out.println("--------------"+f.getName());
+//                while((line = br.readLine())!=null){
+//                    if (line.contains(keyword))
+//                        System.out.println(count++ +" : "+ line);
+//                }
+//            }
+//        }
+
+
+
+
+        return;
+    }
 
     private static void find() throws IOException {
         if (argArr.length !=3) {
@@ -110,7 +187,6 @@ public class ConsoleEx1 {
 
         if (tmp.exists()){
             BufferedReader br = new BufferedReader(new FileReader(tmp));
-            LineNumberReader lr = new LineNumberReader(br);
             String line = null;
             int count = 1;
 
