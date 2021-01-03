@@ -14,6 +14,10 @@ import java.util.regex.*;
  * 문제5: 현재 디렉토리의 파일과 디렉토리의 목록을 보여주는 명령어 dir을 구현하여라. dir만 입력하면 모든 파일과 디렉토리를, dir *ex?.*와 같이 패턴을 입력하면 패턴과 일치하는 파일 또는 디렉터리의 목록을 보여줘야한다.
  *       (패턴에서 '*'와'?'는 와일드 카드로 '*'는 임의의 여러 글자가 올 수 있으며, '?'는 임의의 한 글자를 의미한다.)
  * 문제6: 지정된 파일의 내용을 보여주는 type명령을 구현하라. type명령의 형식은 'type FILE_NAME'이며, FILE_NAME으로 지정된 파일을 찾아서 그 내용을 화면에 보여줘야한다.
+ * 문제7: 지정된 키워드를 지정된 파일에서 찾아서 화면에 보여주는 find명령어를 구현하라.(해당 KEYWORD가 포함된 라인과 라인번호를 화면에 출력,실행결과 참고)
+ *       명령어의 형식은 'find KEYWORD FILE_NAME' 이며 , 형식에 맞지 않을때는 사용법을 보여준다.
+ *       KEYWORD - 지정된 파일에서 찾기 원하는 문자열
+ *       FILE_NAME - KEYWORD가 포함된 내용을 찾을 파일(console*.*과 같은 패턴 지원하지 않음)
  */
 public class ConsoleEx1 {
     static Scanner sc = new Scanner(System.in);
@@ -69,6 +73,8 @@ public class ConsoleEx1 {
                     dir();
                 } else if (command.equals("type")){
                     type();
+                } else if(command.equals("find")){
+                    find();
                 } else {
                     for (String value : argArr) {
                         System.out.println(value);
@@ -80,6 +86,56 @@ public class ConsoleEx1 {
             }
         }//while(true)
     }//main
+
+    private static void find() throws IOException {
+        if (argArr.length !=3) {
+            System.out.println("Usage : find KEYWORD FILE_NAME");
+            return;
+        }
+
+        String keyword = argArr[1];
+        String fileName = argArr[2];
+
+        File tmp = new File(fileName);
+
+        /*
+            다음의 코드를 완성하세요.
+            1.파일(tmp)이 존재하면,
+              1.1 반복문을 이용해서 라인별로 읽어서 KEYWORD가 포함되었는지 확인한다.
+                  (BufferedReader의 readLine()사용)
+              1.2 keyword가 포함된 라인을 발견하면,라인번호와 함께 해당 라인을 화면에 출력한다.
+
+            2.존재하지 않으면, 존재하지 않는 파일이라고 하면에 출력한다.
+         */
+
+        if (tmp.exists()){
+            BufferedReader br = new BufferedReader(new FileReader(tmp));
+            LineNumberReader lr = new LineNumberReader(br);
+            String line = null;
+            int count = 1;
+
+            //1.2 출력하는 첫 번째 방법
+            while((line = br.readLine())!= null){
+                count++;
+                if (line.contains(keyword)){
+                    System.out.println(count + " " + line);
+                }
+
+            }
+            //1.2 출력하는 두 번째 방법
+
+//            for (int i=1; (line = br.readLine())!=null; i++) {
+//                //keyword를 포함한 라인을 출력한다.
+//                if (line.indexOf(keyword)!=-1)
+//                    System.out.println(i+" : "+line);
+//            }
+        }else {
+            System.out.println(tmp+"는/은 존재하지 않는 파일입니다.");
+            return;
+        }
+
+
+    }
 
     private static void type() throws IOException {
         if (argArr.length != 2){
@@ -113,10 +169,10 @@ public class ConsoleEx1 {
         //type메서드 두번쨰 방법
         if (tmp.exists()){
             BufferedReader br = new BufferedReader(new FileReader(tmp));
-
             String line = null;
+            int count = 1;
             while((line = br.readLine()) != null){
-                System.out.println(line);
+                System.out.println(count++ + " " +line);
             }
             br.close();
         }else
