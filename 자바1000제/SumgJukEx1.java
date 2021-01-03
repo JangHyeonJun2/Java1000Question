@@ -12,6 +12,8 @@ import java.util.List;
  *        ClassTotalComparator - 반별로 총점이 높은 순에서 낮은 순으로 정렬(반은 오름차순, 총점은 내림차순)
  *        ClassStudentNo - 반, 번호 순으로 내림차순 정렬
  * [문제4] 총점으로 전교등수를 계산하고 총점이 높은 순에서 낮은 수(내림차순)으로 정렬해서 list를 출력하세요. 전교등수를 저장할 수 있도록 Student클래스에 인스턴스변수 schoolRank가 추가되어 있습니다.
+ * [문제5] 총점으로 반등수를 계산하고 반별로 총점이 높은 순에서 낮은 순(내림차순)으로 정렬해서 list를 출력하세요.
+ *        반등수를 저장할 수 있도록 Student클래스에 인스턴수변수 classRank가 추가되어 있다.
  */
 public class SumgJukEx1 {
     public static void main(String[] args) {
@@ -27,6 +29,7 @@ public class SumgJukEx1 {
         list.add(new Student("홍길동",5,1,100,50,60));
         list.add(new Student("일지매",4,16,90,10,20));
         list.add(new Student("이원구",1,14,100,100,100));
+        list.add(new Student("오레오",2,2,40,80,30));
         Collections.sort(list);
         printList(list);
 
@@ -40,11 +43,69 @@ public class SumgJukEx1 {
         Collections.sort(list, new ClassStudentNoComparator());
         printList(list);
 
-
+        System.out.println("[전교등수를 정렬하여 나타내기]");
         calculateSchoolRank(list);
         printList(list);
 
+        System.out.println("[반등수를 정렬하여 나타내기]");
+        calculateClassRank(list);
+        printList(list);
+    }
 
+    private static void calculateClassRank(ArrayList<Student> list) {
+        Collections.sort(list, new ClassTotalComparator()); // 먼저 반별 총점기준 내림차순으로 정렬한다.
+
+        int prevClassNo = 0;
+        int prevRank = 0;
+        int prevTotal = 0;
+        int length = list.size();
+
+
+
+            /*
+
+               list가 이미 정렬되어 있기 때문에... 이전 데이터하고만 총점과 반을 비교하면 된다.
+
+                다음의 코드를 완성하세요.
+
+                1. 반복문을 이용해서 list에 저장된 Student객체를 하나씩 읽는다.
+
+                    1.1 반이 달라지면,(classNo와 prevClassNo가 다르면)
+
+                           이전등수(prevRank)와 이전총점(prevTotal)을 초기화 한다.
+
+                    1.1 총점(total)이 이전총점(prevTotal)과 같으면
+
+                            이전 등수(prevRank)를 등수(schoolRank)로 한다.
+
+                    1.2 총점이 서로 다르면,
+
+                          등수(schoolRank)의 값을 알맞게 계산해서 저장한다.
+
+                          이전에 동점자 였다면, 그 다음 등수는 동점자의 수를 고려해서 계산되어야한다.
+
+                          (실행결과 화면 참고)
+
+                    1.3 현재 반과 총점과 등수를 이전반(prevClassNo)와 이전총점(prevTotal)과 이전등수(prevRank)에 저장한다.
+
+            */
+
+            for (Student s : list) {
+
+                if (s.getClassNo() != prevClassNo){
+                    prevRank = 0;
+                    prevTotal = 0;
+                }
+                prevClassNo = s.getClassNo();
+
+                if (s.getTotal() == prevTotal){
+                    s.setClassRank(prevRank);
+                }else {
+                    s.setClassRank(prevRank+1);
+                    prevRank = s.getClassRank();
+                    prevTotal = s.getTotal();
+                }
+            }
     }
 
 
@@ -108,14 +169,15 @@ class Student implements Comparable<Student> {
         3. Object클래스의 toString()을 오버라이딩해서 실행결과와 같이 이름, 반,번호,국어, 수학, 영어, 총점이 화면에 출력되도록한다.
      */
 
-    private String name;
-    private int classNo;
-    private int studentNo;
-    private int korean;
-    private int math;
-    private int english;
-    private int total;
-    private int schoolRank=0;
+    private String name = "";
+    private int classNo = 0;
+    private int studentNo = 0;
+    private int korean = 0;
+    private int math = 0;
+    private int english = 0;
+    private int total = 0;
+    private int schoolRank = 0;
+    private int classRank = 0;
 
     public Student(String name, int classNo, int studentNo, int korean, int math, int english) {
         this.name = name;
@@ -135,7 +197,8 @@ class Student implements Comparable<Student> {
                                     + math + "\t"
                                     + english + "\t"
                                     + total +"\t"
-                                    + schoolRank);
+                                    + schoolRank +"\t"
+                                    + classRank);
         return s;
     }
 
@@ -212,5 +275,13 @@ class Student implements Comparable<Student> {
 
     public void setSchoolRank(int schoolRank) {
         this.schoolRank = schoolRank;
+    }
+
+    public int getClassRank() {
+        return classRank;
+    }
+
+    public void setClassRank(int classRank) {
+        this.classRank = classRank;
     }
 }
