@@ -173,6 +173,14 @@ public class TextToolEx1 extends Frame implements WindowListener
                             2. 읽어온 라인이 내용이 없는 빈 라인이면 sb에 저장하지 않는다.
                             3. 작업이 끝난 후에 sb에 담긴 내용을 ta에 보여준다.(setText()사용)
                        */
+                String line = "";
+                Scanner sc = new Scanner(curText);
+                while (sc.hasNextLine()) {
+                    line = sc.nextLine();
+                    if (!line.equals(""))
+                        sb.append(line).append(CR_LF);
+                }
+                ta.setText(sb.toString());
             }
         });
 
