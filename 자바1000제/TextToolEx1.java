@@ -15,6 +15,7 @@ import java.util.Scanner;
  * [문제2] 작업 이전 상태로 되돌리는 Undo기능을 구현하여라. 예를 들어 짝수줄 삭제버튼을 누른 다음에 Undo버튼을 누르면 TextArea의 내용이 짝수줄삭제버튼을 누르기 이전의 상태로 되돌아가야한다.
  * [문제3] TextArea의 데이터 중에서 Param1에 입력된 문자 또는 문자들을 제거하는 기능의 '문자삭제' 버튼의 기능을 완성하세요.
  * [문제4] TextArea의 데이터에서 각 라인의 앞뒤 공백을 제거하는 버튼 'trim'과 빈 줄을 제거하는 기능의 '빈줄삭제' 버튼의 기능을 완성하세요.
+ * [문제5] TextArea의 각 라인의 앞에는 param1에 입력된 문자열을, 뒤에는 param2에 입력된 문자열을 붙이는 기능의 '접두사추가' 버튼을 구현하세요.
  */
 public class TextToolEx1 extends Frame implements WindowListener
 {
@@ -28,7 +29,8 @@ public class TextToolEx1 extends Frame implements WindowListener
             "짝수줄삭제", // btn[0] - 짝수줄을 삭제하는 기능
             "문자삭제", //param1에 지정된 문자들을 삭제하는 기능
             "trim",
-            "빈줄 삭제"
+            "빈줄 삭제",
+            "접두사추가" //Param1,Param2의 문자열을 각 라인의 앞뒤에 붙이는 기능
     };
 
     Button[] btn = new Button[btnName.length];
@@ -180,6 +182,36 @@ public class TextToolEx1 extends Frame implements WindowListener
                     if (!line.equals(""))
                         sb.append(line).append(CR_LF);
                 }
+                ta.setText(sb.toString());
+            }
+        });
+
+        btn[n++].addActionListener(new ActionListener() { //접두사 - 각 라인에 접두사,접미사 붙이기
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String curText = ta.getText();
+                StringBuffer sb = new StringBuffer(curText.length());
+
+                preText = curText;
+
+                /*
+                   다음의 코드를 완성하세요.
+                   1. param1과 param2의 값을 가져온다.(getText()사용)
+                   2. Scanner클래스와 반복문을 이용해서 curText를 라인단위로 읽는다.
+                      (Scanner클래스의 hasNextLine(), nextLine()사용)
+                   3. 읽어온 라인의 앞뒤에 param1과 param2의 값을 붙여서 sb에 담는다.
+                   4. 작업이 끝난 후에 sb에 담긴 내용을 ta에 보여준다.(setText()사용)
+                 */
+                String param1Value = tfParam1.getText();
+                String param2Value = tfParam2.getText();
+
+                String line = "";
+                Scanner sc = new Scanner(curText);
+                while (sc.hasNextLine()) {
+                    line = sc.nextLine();
+                    sb.append(param1Value.concat(line)).append(param2Value).append(CR_LF);
+                }
+
                 ta.setText(sb.toString());
             }
         });
