@@ -17,6 +17,7 @@ import java.util.Scanner;
  * [문제4] TextArea의 데이터에서 각 라인의 앞뒤 공백을 제거하는 버튼 'trim'과 빈 줄을 제거하는 기능의 '빈줄삭제' 버튼의 기능을 완성하세요.
  * [문제5] TextArea의 각 라인의 앞에는 param1에 입력된 문자열을, 뒤에는 param2에 입력된 문자열을 붙이는 기능의 '접두사추가' 버튼을 구현하세요.
  * [문제6] TextArea의 각 라인의 앞에는 param1에 입력된 문자열을, 뒤에는 param2에 입력된 문자열을 제거 기능의 'substring'버튼을 구현하세요.
+ * [문제7] TextArea의 각 라인에서 param1에 입력된 문자열과 param2에 입력된 문자열을 찾아서 두 문자열 사이의 텍스트만 남기고 삭제하는 기능의 'substring2'버튼을 구현하여라.
  */
 public class TextToolEx1 extends Frame implements WindowListener
 {
@@ -32,7 +33,8 @@ public class TextToolEx1 extends Frame implements WindowListener
             "trim",
             "빈줄 삭제",
             "접두사추가", //Param1,Param2의 문자열을 각 라인의 앞뒤에 붙이는 기능
-            "substring" //Param1,Param2에 지정된 문자열을 각 라인에서 제거하는 기능
+            "substring", //Param1,Param2에 지정된 문자열을 각 라인에서 제거하는 기능
+            "substring2" //Param1,Param2에 지정된 문자열로 둘러싸인 부분을 남기고 제거하는 기능
     };
 
     Button[] btn = new Button[btnName.length];
@@ -243,6 +245,12 @@ public class TextToolEx1 extends Frame implements WindowListener
                     line = sc.nextLine();
                     int startIndex = param1Value.length();
                     int endIndex = line.length()-(param2Value.length());
+
+                    if (line.length() < startIndex + endIndex){
+                        JOptionPane.showMessageDialog(null,"Param1, Param2의 라인이 너무 깁니다."); //메세지 출력
+                        continue;
+                    }
+
                     sb.append(line.substring(startIndex,endIndex)).append(CR_LF);
                 }
                 ta.setText(sb.toString());
