@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * 이번엔 간단한 AWT프로그램을 이용해서... Text데이터를 편집하는데 도움이 되는 기능들을 하나씩 구현해나제가는 예제입니다.
@@ -18,6 +18,7 @@ import java.util.Scanner;
  * [문제5] TextArea의 각 라인의 앞에는 param1에 입력된 문자열을, 뒤에는 param2에 입력된 문자열을 붙이는 기능의 '접두사추가' 버튼을 구현하세요.
  * [문제6] TextArea의 각 라인의 앞에는 param1에 입력된 문자열을, 뒤에는 param2에 입력된 문자열을 제거 기능의 'substring'버튼을 구현하세요.
  * [문제7] TextArea의 각 라인에서 param1에 입력된 문자열과 param2에 입력된 문자열을 찾아서 두 문자열 사이의 텍스트만 남기고 삭제하는 기능의 'substring2'버튼을 구현하여라.
+ * [문제8] TextArea의 각 라인의 내용중 중복된 것을 제외하고 정렬해서 보여주는 'distinct' 버튼을 구현하여라.
  */
 public class TextToolEx1 extends Frame implements WindowListener
 {
@@ -34,7 +35,8 @@ public class TextToolEx1 extends Frame implements WindowListener
             "빈줄 삭제",
             "접두사추가", //Param1,Param2의 문자열을 각 라인의 앞뒤에 붙이는 기능
             "substring", //Param1,Param2에 지정된 문자열을 각 라인에서 제거하는 기능
-            "substring2" //Param1,Param2에 지정된 문자열로 둘러싸인 부분을 남기고 제거하는 기능
+            "substring2", //Param1,Param2에 지정된 문자열로 둘러싸인 부분을 남기고 제거하는 기능
+            "distinct" //중복값 제거한 후 정렬해서 보여주기
     };
 
     Button[] btn = new Button[btnName.length];
@@ -296,6 +298,46 @@ public class TextToolEx1 extends Frame implements WindowListener
             }
         });
 
+
+        btn[n++].addActionListener(new ActionListener() { //distinct - 중복 라인 제거
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String curText = ta.getText();
+                StringBuffer sb = new StringBuffer(curText.length());
+
+                preText = curText;
+
+                /*
+                       다음의 코드를 완성하세요.
+                      1. Scanner클래스와 반복문을 이용해서 curText를 라인단위로 읽어서 HashSet에 담는다.
+                      2. HashSet의 내용을 ArrayList로 옮긴다음 정렬한다.(Collections의 sort()사용)
+                      3. 정렬된 ArrayList의 내용을 sb에 저장한다.
+                      4. sb에 저장된 내용을 TextArea에 보여준다.
+                */
+
+                Scanner sc = new Scanner(curText);
+                HashSet<String> line = new HashSet<>();
+                ArrayList<String> arr = new ArrayList<>();
+                while (sc.hasNextLine()) {
+                    line.add(sc.nextLine());
+                }
+
+                Iterator<String> iterator = line.iterator();
+                while(iterator.hasNext()) {
+                    arr.add(iterator.next());
+                }
+                Collections.sort(arr);
+
+                Iterator<String> iterator1 = arr.iterator();
+                while (iterator1.hasNext()) {
+                    sb.append(iterator1.next()).append(CR_LF);
+                }
+
+                ta.setText(sb.toString());
+
+
+            }
+        });
 
     }       // end of registerEventHandler()
 
