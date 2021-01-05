@@ -16,6 +16,7 @@ import java.util.Scanner;
  * [문제3] TextArea의 데이터 중에서 Param1에 입력된 문자 또는 문자들을 제거하는 기능의 '문자삭제' 버튼의 기능을 완성하세요.
  * [문제4] TextArea의 데이터에서 각 라인의 앞뒤 공백을 제거하는 버튼 'trim'과 빈 줄을 제거하는 기능의 '빈줄삭제' 버튼의 기능을 완성하세요.
  * [문제5] TextArea의 각 라인의 앞에는 param1에 입력된 문자열을, 뒤에는 param2에 입력된 문자열을 붙이는 기능의 '접두사추가' 버튼을 구현하세요.
+ * [문제6] TextArea의 각 라인의 앞에는 param1에 입력된 문자열을, 뒤에는 param2에 입력된 문자열을 제거 기능의 'substring'버튼을 구현하세요.
  */
 public class TextToolEx1 extends Frame implements WindowListener
 {
@@ -30,7 +31,8 @@ public class TextToolEx1 extends Frame implements WindowListener
             "문자삭제", //param1에 지정된 문자들을 삭제하는 기능
             "trim",
             "빈줄 삭제",
-            "접두사추가" //Param1,Param2의 문자열을 각 라인의 앞뒤에 붙이는 기능
+            "접두사추가", //Param1,Param2의 문자열을 각 라인의 앞뒤에 붙이는 기능
+            "substring" //Param1,Param2에 지정된 문자열을 각 라인에서 제거하는 기능
     };
 
     Button[] btn = new Button[btnName.length];
@@ -115,7 +117,7 @@ public class TextToolEx1 extends Frame implements WindowListener
 
                 String paramValue = tfParam1.getText();
                 if (paramValue.equals("")){
-                    JOptionPane.showMessageDialog(null,"Param1을 입력하세요");
+                    JOptionPane.showMessageDialog(null,"Param1을 입력하세요"); //메세지 출력
                     return;
                 }
 
@@ -213,6 +215,38 @@ public class TextToolEx1 extends Frame implements WindowListener
                 }
 
                 ta.setText(sb.toString());
+            }
+        });
+
+        btn[n++].addActionListener(new ActionListener() { //substring - 문자열 자르기
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String curText = ta.getText();
+                StringBuffer sb = new StringBuffer(curText.length());
+
+                preText = curText;
+
+                /*
+                       다음의 코드를 완성하세요.
+                       1. param1과 param2의 값을 가져온다.(getText()사용)
+                       2. Scanner클래스와 반복문을 이용해서 curText를 라인단위로 읽는다.
+                          (Scanner클래스의 hasNextLine(), nextLine()사용)
+                       3. 읽어온 라인을 substring으로 자른다. - param1과 param2의 내용에 관계없이 길이만큼 자른다.
+                          (param1의 문자열길이와 param2의 문자열 길이를 이용)
+                       4. 작업이 끝난 후에 sb에 담긴 내용을 ta에 보여준다.(setText()사용)
+                 */
+                String param1Value = tfParam1.getText();
+                String param2Value = tfParam2.getText();
+                String line = "";
+                Scanner sc = new Scanner(curText);
+                while (sc.hasNextLine()) {
+                    line = sc.nextLine();
+                    int startIndex = param1Value.length();
+                    int endIndex = line.length()-(param2Value.length());
+                    sb.append(line.substring(startIndex,endIndex)).append(CR_LF);
+                }
+                ta.setText(sb.toString());
+
             }
         });
 
