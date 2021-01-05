@@ -11,6 +11,7 @@ import java.util.Scanner;
  * 이번엔 간단한 AWT프로그램을 이용해서... Text데이터를 편집하는데 도움이 되는 기능들을 하나씩 구현해나가는 예제입니다.
  * 이 문제들을 응용해서 필요한 기능들을 추가해서 사용하면 Text데이터를 처리하는데 도움이 될 것입니다.
  * [문제1] 짝수 줄을 삭제하는 버튼의 기능을 구현하세요.
+ * [문제2] 작업 이전 상태로 되돌리는 Undo기능을 구현하여라. 예를 들어 짝수줄 삭제버튼을 누른 다음에 Undo버튼을 누르면 TextArea의 내용이 짝수줄삭제버튼을 누르기 이전의 상태로 되돌아가야한다.
  */
 public class TextToolEx1 extends Frame implements WindowListener
 {
@@ -20,6 +21,7 @@ public class TextToolEx1 extends Frame implements WindowListener
     Label lb1, lb2;
 
     String[] btnName = {
+            "Undo",    //작업이전 상태로 되돌림.
             "짝수줄삭제", // btn[0] - 짝수줄을 삭제하는 기능
     };
 
@@ -32,11 +34,27 @@ public class TextToolEx1 extends Frame implements WindowListener
      * 이런것들은 알아내기 위해서는 line.separator 라는 시스템속성을 사용해서 쉽게 이용할수 있습니다.
      */
     private final String CR_LF = System.getProperty("line.separator"); // 개행문자(줄바꿈문자)
+    private String preText = ""; //TextArea ta의 내용을 저장하기 위한 변수.
 
     private void registerEventHandler() {
         addWindowListener(this);
 
-        btn[0].addActionListener(new ActionListener() { // 짝수줄삭제 - 짝수줄을 삭제하는 기능
+        //Undo - 작업이전 상태로 되돌림
+        btn[0].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = ta.getText();
+
+                if (!preText.equals(""))
+                    ta.setText(preText);
+
+                preText = text;
+
+            }
+        });
+
+
+        btn[1].addActionListener(new ActionListener() { // 짝수줄삭제 - 짝수줄을 삭제하는 기능
             public void actionPerformed(ActionEvent ae) {
 
                       /*
@@ -50,6 +68,7 @@ public class TextToolEx1 extends Frame implements WindowListener
                      */
 
                 String text = ta.getText();
+                preText = text;
                 String line = "";
                 int count = 0;
                 StringBuffer sb = new StringBuffer(text.length());
