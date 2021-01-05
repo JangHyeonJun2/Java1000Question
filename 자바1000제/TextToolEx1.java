@@ -19,6 +19,7 @@ import java.util.*;
  * [문제6] TextArea의 각 라인의 앞에는 param1에 입력된 문자열을, 뒤에는 param2에 입력된 문자열을 제거 기능의 'substring'버튼을 구현하세요.
  * [문제7] TextArea의 각 라인에서 param1에 입력된 문자열과 param2에 입력된 문자열을 찾아서 두 문자열 사이의 텍스트만 남기고 삭제하는 기능의 'substring2'버튼을 구현하여라.
  * [문제8] TextArea의 각 라인의 내용중 중복된 것을 제외하고 정렬해서 보여주는 'distinct' 버튼을 구현하여라.
+ * [문제9] TextArea의 라인의 내용중 중복된 것을 제외하고 정렬해서 보여주는 'distinct'버튼에 기능을 추가해서 중복된 라인의 수도 같이 보여주는 'distinct2' 버튼을 구현하라
  */
 public class TextToolEx1 extends Frame implements WindowListener
 {
@@ -36,8 +37,9 @@ public class TextToolEx1 extends Frame implements WindowListener
             "접두사추가", //Param1,Param2의 문자열을 각 라인의 앞뒤에 붙이는 기능
             "substring", //Param1,Param2에 지정된 문자열을 각 라인에서 제거하는 기능
             "substring2", //Param1,Param2에 지정된 문자열로 둘러싸인 부분을 남기고 제거하는 기능
-            "distinct" //중복값 제거한 후 정렬해서 보여주기
-    };
+            "distinct", //중복값 제거한 후 정렬해서 보여주기
+            "distinct2" //중복값 제거한 후 정렬해서 보여주기 - 중복 카운트 포함
+            };
 
     Button[] btn = new Button[btnName.length];
 
@@ -332,12 +334,58 @@ public class TextToolEx1 extends Frame implements WindowListener
                 while (iterator1.hasNext()) {
                     sb.append(iterator1.next()).append(CR_LF);
                 }
+                ta.setText(sb.toString());
+            }
+        });
+
+
+        btn[n++].addActionListener(new ActionListener() { // distinct2 - 중복 라인 제거 + 카운트
+            public void actionPerformed(ActionEvent ae) {
+                String curText = ta.getText();
+                StringBuffer sb = new StringBuffer(curText.length());
+
+                preText = curText;
+
+               /*
+                       다음의 코드를 완성하세요.
+                      1. Scanner클래스와 반복문을 이용해서 curText를 라인단위로 읽어서 TreeMap에 담는다.
+                          1.1 TreeMap에 담을 때, 각 라인을 키로 저장하고 값으로는 중복회수를 저장한다.
+                          1.2 TreeMap에 담을 때, 이미 같은 내용의 값이 저장되어 있는지 확인하고
+                             1.1.1 이미 같은 내용이 저장되어 있으면, 해당 키의 값을 읽어서 1증가시키고
+                             1.1.2  새로운 키값이면 1을 값으로 저장한다.
+                      2. Iterator를 이용해서 TreeMap에 저장된 키와 값을 구분자와 함께 sb에 저장한다.
+                         (TreeMap을 사용했기 때문에, 자동적으로 키값을 기준으로 오름차순 정렬된다.)
+                      3. sb에 저장된 내용을 TextArea에 보여준다.
+               */
+               Scanner sc = new Scanner(curText);
+               TreeMap<String,Integer> tm = new TreeMap<>();
+
+               String line = "";
+               while(sc.hasNextLine()) {
+                   line = sc.nextLine();
+                   if (tm.isEmpty()) {
+                       tm.put(line,1);
+                   }else {
+                       if (tm.containsKey(line)) {
+                           Integer integer = tm.get(line);
+                           tm.put(line, integer.intValue() +1);
+                       } else {
+                           tm.put(line,1);
+                       }
+                   }
+               }
+                Set<String> set = tm.keySet();
+                for (String key : set) {
+                    sb.append(key).append(", "+tm.get(key));
+                }
 
                 ta.setText(sb.toString());
 
-
             }
+
+
         });
+
 
     }       // end of registerEventHandler()
 
