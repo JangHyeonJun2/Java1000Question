@@ -258,6 +258,44 @@ public class TextToolEx1 extends Frame implements WindowListener
             }
         });
 
+        btn[n++].addActionListener(new ActionListener() { // substring2 - 지정된 문자를 찾아서 그 위치까지 잘라내기
+            public void actionPerformed(ActionEvent ae) {
+                String curText = ta.getText();
+                StringBuffer sb = new StringBuffer(curText.length());
+
+                preText = curText;
+
+               /*
+                       다음의 코드를 완성하세요.
+                   1. param1과 param2의 값을 가져온다.(getText()사용)
+                   2. Scanner클래스와 반복문을 이용해서 curText를 라인단위로 읽는다.
+                   3. 각 라인에서 param1, param2과 일치하는 문자열의 위치를 찾는다.
+                      (param1은 라인의 왼쪽끝부터, param2는 라인의 오른쪽끝부터 찾기 시작한다.)
+                       param1과 param2로 둘러쌓인 부분을 sb에 저장한다.
+                   4. sb의 내용을 TextArea에 보여준다.
+               */
+
+                String param1Value = tfParam1.getText();
+                String param2Value = tfParam2.getText();
+                if (param1Value.equals("") || param2Value.equals("")){
+                    JOptionPane.showMessageDialog(null,"Param1 or Param2값이 없습니다."); //메세지 출력
+                    return;
+                }
+
+                String line = "";
+                Scanner sc = new Scanner(curText);
+                while (sc.hasNextLine()) {
+                    line = sc.nextLine();
+                    int num = param1Value.length(); //Indexof반환값이 만약에 param1이 (" 이것이면 ("문자의 (의 위치를 알려주기떄문에 ("문자열의 길이를 구해서 더 해준다.
+                    int sIndex = line.indexOf(param1Value);
+                    int eIndex = line.lastIndexOf(param2Value);
+                    sb.append(line.substring(sIndex+num,eIndex)).append(CR_LF);
+                }
+
+                ta.setText(sb.toString());
+            }
+        });
+
 
     }       // end of registerEventHandler()
 
