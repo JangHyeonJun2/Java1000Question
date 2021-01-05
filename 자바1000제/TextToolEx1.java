@@ -1,5 +1,6 @@
 package 자바1000제;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +13,7 @@ import java.util.Scanner;
  * 이 문제들을 응용해서 필요한 기능들을 추가해서 사용하면 Text데이터를 처리하는데 도움이 될 것입니다.
  * [문제1] 짝수 줄을 삭제하는 버튼의 기능을 구현하세요.
  * [문제2] 작업 이전 상태로 되돌리는 Undo기능을 구현하여라. 예를 들어 짝수줄 삭제버튼을 누른 다음에 Undo버튼을 누르면 TextArea의 내용이 짝수줄삭제버튼을 누르기 이전의 상태로 되돌아가야한다.
+ * [문제3] TextArea의 데이터 중에서 Param1에 입력된 문자 또는 문자들을 제거하는 기능의 '문자삭제' 버튼의 기능을 완성하세요.
  */
 public class TextToolEx1 extends Frame implements WindowListener
 {
@@ -23,6 +25,7 @@ public class TextToolEx1 extends Frame implements WindowListener
     String[] btnName = {
             "Undo",    //작업이전 상태로 되돌림.
             "짝수줄삭제", // btn[0] - 짝수줄을 삭제하는 기능
+            "문자삭제", //param1에 지정된 문자들을 삭제하는 기능
     };
 
     Button[] btn = new Button[btnName.length];
@@ -39,8 +42,10 @@ public class TextToolEx1 extends Frame implements WindowListener
     private void registerEventHandler() {
         addWindowListener(this);
 
+        int n = 0;
+
         //Undo - 작업이전 상태로 되돌림
-        btn[0].addActionListener(new ActionListener() {
+        btn[n++].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String text = ta.getText();
@@ -54,7 +59,7 @@ public class TextToolEx1 extends Frame implements WindowListener
         });
 
 
-        btn[1].addActionListener(new ActionListener() { // 짝수줄삭제 - 짝수줄을 삭제하는 기능
+        btn[n++].addActionListener(new ActionListener() { // 짝수줄삭제 - 짝수줄을 삭제하는 기능
             public void actionPerformed(ActionEvent ae) {
 
                       /*
@@ -68,6 +73,7 @@ public class TextToolEx1 extends Frame implements WindowListener
                      */
 
                 String text = ta.getText();
+                System.out.println(text.length());
                 preText = text;
                 String line = "";
                 int count = 0;
@@ -82,6 +88,43 @@ public class TextToolEx1 extends Frame implements WindowListener
                 }
                 ta.setText(sb.toString());
 
+            }
+        });
+
+        btn[n++].addActionListener(new ActionListener() {//문자 삭제 - Param1에 지정된 문자를 삭제하는 기능
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = ta.getText();
+                StringBuffer sb = new StringBuffer(text.length());
+
+                preText = text;
+
+                /*
+                    다음의 코드를 완성하시오.
+                    1. TextField Param1의 값을 가져온다.(getText()사용)
+                       2. 반복문을 이용해서 curText를 한글자씩 읽어서
+                          Param1에서 가져온 문자열에 포함되어 있는지 확인한다.
+                          2.1 만일 포함되어 있으면 sb에 저장하고
+                          2.2 포함되어 있지 않으면 sb에 저장하지 않는다.
+                       3. 작업이 끝난 후에 sb에 담긴 내용을 ta에 보여준다.(setText()사용)
+                 */
+
+                String paramValue = tfParam1.getText();
+                if (paramValue.equals("")){
+                    JOptionPane.showMessageDialog(null,"Param1을 입력하세요");
+                    return;
+                }
+
+                String[] splits = text.split(CR_LF);
+                for (int i=0; i<splits.length; i++) {
+                    String[] splitss = splits[i].split("");
+                    for (int j=0; j<splitss.length; j++) {
+                        if (!paramValue.contains(splitss[j]))
+                            sb.append(splitss[j]);
+                    }
+                    sb.append(CR_LF);
+                }
+                ta.setText(sb.toString());
             }
         });
     }       // end of registerEventHandler()
