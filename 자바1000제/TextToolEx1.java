@@ -9,11 +9,12 @@ import java.awt.event.WindowListener;
 import java.util.Scanner;
 
 /**
- * 이번엔 간단한 AWT프로그램을 이용해서... Text데이터를 편집하는데 도움이 되는 기능들을 하나씩 구현해나가는 예제입니다.
+ * 이번엔 간단한 AWT프로그램을 이용해서... Text데이터를 편집하는데 도움이 되는 기능들을 하나씩 구현해나제가는 예제입니다.
  * 이 문제들을 응용해서 필요한 기능들을 추가해서 사용하면 Text데이터를 처리하는데 도움이 될 것입니다.
  * [문제1] 짝수 줄을 삭제하는 버튼의 기능을 구현하세요.
  * [문제2] 작업 이전 상태로 되돌리는 Undo기능을 구현하여라. 예를 들어 짝수줄 삭제버튼을 누른 다음에 Undo버튼을 누르면 TextArea의 내용이 짝수줄삭제버튼을 누르기 이전의 상태로 되돌아가야한다.
  * [문제3] TextArea의 데이터 중에서 Param1에 입력된 문자 또는 문자들을 제거하는 기능의 '문자삭제' 버튼의 기능을 완성하세요.
+ * [문제4] TextArea의 데이터에서 각 라인의 앞뒤 공백을 제거하는 버튼 'trim'과 빈 줄을 제거하는 기능의 '빈줄삭제' 버튼의 기능을 완성하세요.
  */
 public class TextToolEx1 extends Frame implements WindowListener
 {
@@ -26,6 +27,8 @@ public class TextToolEx1 extends Frame implements WindowListener
             "Undo",    //작업이전 상태로 되돌림.
             "짝수줄삭제", // btn[0] - 짝수줄을 삭제하는 기능
             "문자삭제", //param1에 지정된 문자들을 삭제하는 기능
+            "trim",
+            "빈줄 삭제"
     };
 
     Button[] btn = new Button[btnName.length];
@@ -73,7 +76,6 @@ public class TextToolEx1 extends Frame implements WindowListener
                      */
 
                 String text = ta.getText();
-                System.out.println(text.length());
                 preText = text;
                 String line = "";
                 int count = 0;
@@ -127,6 +129,54 @@ public class TextToolEx1 extends Frame implements WindowListener
                 ta.setText(sb.toString());
             }
         });
+
+        btn[n++].addActionListener(new ActionListener() { //trim - 라인의 좌우공백을 제거하는 기능
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String curText = ta.getText();
+                StringBuffer sb = new StringBuffer(curText.length());
+
+                preText = curText;
+                /*
+
+                           다음의 코드를 완성하세요.
+                            1. Scanner클래스와 반복문을 이용해서 curText를 라인단위로 읽는다.
+                               (Scanner클래스의 hasNextLine(), nextLine()사용)
+                            2. 읽어온 라인의 왼쪼공백과 오른쪽 공백을 제거한다.(String클래스의 trim()사용)
+                            3. 작업이 끝난 후에 sb에 담긴 내용을 ta에 보여준다.(setText()사용)
+                       */
+                String line = "";
+                Scanner sc = new Scanner(curText);
+                while (sc.hasNextLine()) {
+                    line = sc.nextLine();
+                    sb.append(line.trim()).append(CR_LF);
+                }
+                ta.setText(sb.toString());
+            }
+
+
+
+        });
+
+        btn[n++].addActionListener(new ActionListener() {//빈줄삭제 기능
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String curText = ta.getText();
+                StringBuffer sb = new StringBuffer(curText.length());
+
+                preText = curText;
+
+                 /*
+                            다음의 코드를 완성하세요.
+                            1. Scanner클래스와 반복문을 이용해서 curText를 라인단위로 읽는다.
+                               (Scanner클래스의 hasNextLine(), nextLine()사용)
+                            2. 읽어온 라인이 내용이 없는 빈 라인이면 sb에 저장하지 않는다.
+                            3. 작업이 끝난 후에 sb에 담긴 내용을 ta에 보여준다.(setText()사용)
+                       */
+            }
+        });
+
+
     }       // end of registerEventHandler()
 
     public static void main(String[] args) {
