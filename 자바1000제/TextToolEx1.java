@@ -20,6 +20,7 @@ import java.util.*;
  * [문제7] TextArea의 각 라인에서 param1에 입력된 문자열과 param2에 입력된 문자열을 찾아서 두 문자열 사이의 텍스트만 남기고 삭제하는 기능의 'substring2'버튼을 구현하여라.
  * [문제8] TextArea의 각 라인의 내용중 중복된 것을 제외하고 정렬해서 보여주는 'distinct' 버튼을 구현하여라.
  * [문제9] TextArea의 라인의 내용중 중복된 것을 제외하고 정렬해서 보여주는 'distinct'버튼에 기능을 추가해서 중복된 라인의 수도 같이 보여주는 'distinct2' 버튼을 구현하라
+ * [문제10] TextArea의 데이터를 라인별로 읽어서 param1에 입력된 형식에 맞게 변형하여 보여주는 '패턴적용'버튼을 구현하여라..
  */
 public class TextToolEx1 extends Frame implements WindowListener
 {
@@ -38,7 +39,8 @@ public class TextToolEx1 extends Frame implements WindowListener
             "substring", //Param1,Param2에 지정된 문자열을 각 라인에서 제거하는 기능
             "substring2", //Param1,Param2에 지정된 문자열로 둘러싸인 부분을 남기고 제거하는 기능
             "distinct", //중복값 제거한 후 정렬해서 보여주기
-            "distinct2" //중복값 제거한 후 정렬해서 보여주기 - 중복 카운트 포함
+            "distinct2", //중복값 제거한 후 정렬해서 보여주기 - 중복 카운트 포함
+            "패턴적용" //데이터에 지정된 패턴 적용하기
             };
 
     Button[] btn = new Button[btnName.length];
@@ -376,7 +378,7 @@ public class TextToolEx1 extends Frame implements WindowListener
                }
                 Set<String> set = tm.keySet();
                 for (String key : set) {
-                    sb.append(key).append(", "+tm.get(key));
+                    sb.append(key).append(", "+tm.get(key)).append(CR_LF);
                 }
 
                 ta.setText(sb.toString());
@@ -386,6 +388,29 @@ public class TextToolEx1 extends Frame implements WindowListener
 
         });
 
+        btn[n++].addActionListener(new ActionListener() { // 패턴적용
+            public void actionPerformed(ActionEvent ae) {
+                String curText = ta.getText();
+                StringBuffer sb = new StringBuffer(curText.length());
+
+                preText = curText;
+
+                String pattern = tfParam1.getText();
+                String delimiter = tfParam2.getText();
+
+                if(delimiter.length()==0)
+                    delimiter = ",";
+                 /*
+                       다음의 코드를 완성하세요.
+                       1. Scanner클래스와 반복문을 이용해서 curText를 라인단위로 읽는다.
+                       2. 라인을 구분자(delimiter)로 나누어 문자열 배열에 저장한다.(String클래스의 split()사용)
+                       3. param1로부터 입력받은 pattern을 각 라인에 적용해서 sb에 저장한다.
+                          (MessageFormat클래스의 format()사용)
+                       4. sb의 내용을 TextArea에 보여준다.
+                 */
+
+            }
+        });
 
     }       // end of registerEventHandler()
 
