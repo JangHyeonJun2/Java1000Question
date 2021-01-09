@@ -8,6 +8,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 이번엔 간단한 AWT프로그램을 이용해서... Text데이터를 편집하는데 도움이 되는 기능들을 하나씩 구현해나제가는 예제입니다.
@@ -22,6 +24,7 @@ import java.util.*;
  * [문제8] TextArea의 각 라인의 내용중 중복된 것을 제외하고 정렬해서 보여주는 'distinct' 버튼을 구현하여라.
  * [문제9] TextArea의 라인의 내용중 중복된 것을 제외하고 정렬해서 보여주는 'distinct'버튼에 기능을 추가해서 중복된 라인의 수도 같이 보여주는 'distinct2' 버튼을 구현하라
  * [문제10] TextArea의 데이터를 라인별로 읽어서 param1에 입력된 형식에 맞게 변형하여 보여주는 '패턴적용'버튼을 구현하여라..
+ * [문제11] extArea의 데이터를 라인별로 읽어서 param1에 입력된 형식에서 데이터를 뽑아내서 보여주는 '패턴제거'버튼을 구현하세요.
  */
 public class TextToolEx1 extends Frame implements WindowListener
 {
@@ -41,7 +44,8 @@ public class TextToolEx1 extends Frame implements WindowListener
             "substring2", //Param1,Param2에 지정된 문자열로 둘러싸인 부분을 남기고 제거하는 기능
             "distinct", //중복값 제거한 후 정렬해서 보여주기
             "distinct2", //중복값 제거한 후 정렬해서 보여주기 - 중복 카운트 포함
-            "패턴적용" //데이터에 지정된 패턴 적용하기
+            "패턴적용", //데이터에 지정된 패턴 적용하기
+            "패턴제거" //데이터에 적용된 패턴 삭제하
             };
 
     Button[] btn = new Button[btnName.length];
@@ -419,6 +423,49 @@ public class TextToolEx1 extends Frame implements WindowListener
                      sb.append(MessageFormat.format(pattern, splits)).append(CR_LF);
                  }
                  ta.setText(sb.toString());
+
+            }
+        });
+        /**
+         * [참고]
+         * 0\d{1,2} - 패턴의 의미는 0으로 시작하는 한자리 또는 두자리의 숫자
+         * \d{3,4}  - 3자리 또는 4자리의 숫자
+         * \d{4}    -  4자리의 숫자
+         */
+        btn[n++].addActionListener(new ActionListener() { // 패턴제거
+            public void actionPerformed(ActionEvent ae) {
+                String curText = ta.getText();
+                StringBuffer sb = new StringBuffer(curText.length());
+
+                preText = curText;
+
+                String pattern = tfParam1.getText();
+                String delimiter = tfParam2.getText();
+
+                Pattern p = Pattern.compile(pattern);
+
+                if(delimiter.length()==0) delimiter = ",";
+
+               /*
+                   다음의 코드를 완성하세요.
+                   1. Scanner클래스와 반복문을 이용해서 curText를 라인단위로 읽는다.
+                   2. 각 라인을 pattern에 맞게 매칭시킨다.(Pattern클래스의 matcher()사용)
+                   3. pattern에 매칭되는 데이터를 구분자와 함께 sb에 저장한다.
+                   4. sb의 내용을 TextArea에 보여준다.
+               */
+               Scanner sc = new Scanner(curText);
+               String line = "";
+               while (sc.hasNextLine()) {
+                   String s = sc.nextLine();
+                   Matcher m = p.matcher(s);
+                   if (m.matches()) {
+                       sb.append(s.replace("-",delimiter)).append(CR_LF);
+                   }else {
+                       sb.append(s).append(CR_LF);
+                   }
+               }
+               ta.setText(sb.toString());
+
 
             }
         });
