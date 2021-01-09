@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.text.MessageFormat;
 import java.util.*;
 
 /**
@@ -408,6 +409,16 @@ public class TextToolEx1 extends Frame implements WindowListener
                           (MessageFormat클래스의 format()사용)
                        4. sb의 내용을 TextArea에 보여준다.
                  */
+
+                 Scanner sc = new Scanner(curText);
+                 String line = "";
+                 while(sc.hasNextLine()) {
+                     line = sc.nextLine();
+                     String[] splits = line.split(delimiter);
+
+                     sb.append(MessageFormat.format(pattern, splits)).append(CR_LF);
+                 }
+                 ta.setText(sb.toString());
 
             }
         });
