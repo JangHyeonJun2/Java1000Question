@@ -131,6 +131,9 @@ public class BingoEx1 extends Frame {
                   4. checkBingo()를 호출해서 빙고가 완성되었는지 확인하고, 완성되었으면
                       콘솔에 "Bingo~!!!"라고 출력한다.
               */
+
+            System.out.println(btn.getLabel()); //눌려진 버튼의 Label을 콘솔에 출력한다.
+
              int count = 0;
              for (int i=0; i<btnArr.length; i++) {
                  if (btnArr[i] == btn) {
