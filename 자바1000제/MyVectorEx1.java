@@ -1,6 +1,7 @@
 package 자바1000제;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * [문제1] 다음의 MyVector클래스의 메서드들을 완성하세요.
@@ -31,6 +32,17 @@ import java.util.ArrayList;
  * void clear() - 객체배열을 비운다.
  * Object[] toArray() -  객체배열을 복사해서 반환한다.
  * String toString() - 객체배열에 저장된 모든 객체를 출력한다.(모든 객체의 toString()을 호출한다.)
+ *
+ * [문제5] MyVector클래스에 iterator()를 완성하세요. 그리고 이 메서드를 구현하는데 필요한, Iterator인터페이스를
+ *             구현한 내부 클래스를 완성하세요.
+ * Iterator iterator() - MyVector클래스의 iterator를 반환한다.(Iterator인터페이스를 구현한 클래스의 인스턴스를 반환)
+ * << Iterator인터페이스에 정의된 메서드 >>
+ * boolean hasNext() - 다음에 읽을 요소가 있는지 확인한다. 있으면 true, 없으면 false
+ * Object next()        -  다음 요소를 읽어서 반환한다.
+ * void remove()       -  읽어온 요소를 제거한다.(반드시 next()를 호출한 다음에 호출해야한다.
+ * [참고] iterator를 통해 MyVector의 요소들에 접근하는 동안, MyVector의 요소가 추가또는 삭제 되면 iterator는 예외를
+ *           발생시켜야한다. 여기서 그 것(fast-fail)에 대한 구현은 생략했다.
+ *           Vector클래스에는 구현되어 있으니, 필요하다면 Vector클래스의 소스를 참고하도록 하자.
  */
 class MyVector {
     protected Object[] data = null; //객체를 담기 위한 객체배열을 선언한다.
@@ -261,7 +273,7 @@ class MyVector {
            throw new IndexOutOfBoundsException("index > size");
        oldObj = data[index];
        if (index != size-1){
-           System.arraycopy(data,index+1,data,index,size-1);
+           System.arraycopy(data,index+1,data,index,size-index-1);
            data[size-1] = null;
            size--;
        }
@@ -320,6 +332,72 @@ class MyVector {
          }
          return sb.toString();
     }
+
+    public Iterator iterator() {
+        /*
+            다음의 코드를 완성하세요.
+            1. 내부클래스 Itr의 객체를 생성해서 반환한다.
+         */
+        Itr itr = new Itr();
+        return itr;
+    }
+
+    private class Itr implements Iterator {
+        int cursor = 0;    // 읽어올 요소의 위치(index)
+        int lastRet = -1;  // 직전에 읽어온 객체의 위치(index)
+
+        public Object next() {
+              /*
+                다음의 코드를 완성하세요.
+                1. cursor가 가리키고 있는 위치(index)의 객체를 꺼내온다.(get()사용)
+                2. cursor의 값을 lastRet에 저장하고 cursor의 값을 1 증가시킨다.
+                   (예를 들어 cursor의 값이 1 이었으면 lastRet의 값은 1이 되고, cursor의 값은 2가 된다.)
+                3. 1에서 꺼내온 객체를 반환한다.
+             */
+            Object value = get(cursor);
+            lastRet = cursor;
+            cursor++;
+            return value;
+        }
+
+        public boolean hasNext() {
+                /*
+                   코드를 완성하세요.
+                    hint : cursor의 값이 객체배열의 마지막요소의 위치(index)에 다다랐는지 확인한다.
+               */
+                if (cursor == size-1)
+                    return false;
+                else
+                    return true;
+        }
+
+        public void remove() {
+
+              /*
+                  다음의 코드를 완성하세요.
+                  1. lastRet의 값이 -1이면(직전에 읽어온 객체가 없거나 삭제 되었으면)
+                     IllegalStateException을 발생시킨다.
+                  2. 직전에 읽어온 객체를 객체배열에서 제거한다.(MyVector의 remove()사용)
+                  3. lastRet의 값이 cursor의 값보다 작으면 cursor의 값을 1감소 시킨다.
+                      (현재 cursor의 위치보다 이전의 값이 삭제되면 cursor의 위치도 변경되어야 하므로)
+                  4. lastRet에 -1을 저장한다.(직전에 읽어온 객체가 삭제되었으므로)
+
+                  예를 들어 next()를 호출해서 객체배열의 index가 3인 요소를 읽어오면..
+                   cursor(다음에 읽어올 객체의 위치)의 값은 4가 되고, lastRet의 값은 3이 된다.
+                   이때 remove()가 호출되면, 읽어온 객체인 index가 3인 요소는 삭제 되고
+                   index가 4인 위치에 있던 객체는 index가 3인 위치로 이동하게 된다.
+                   (빈 자리를 메꾸기 위해 index가 4 이후의 모든 객체가 이동해야함)
+                   그래서 cursor의 값은 4에서 3이 되어야 하고, lastRet의 값은 -1이 되어서
+                   읽어온 객체가 없거나 삭제 되었음을 의미한다.
+              */
+              if (lastRet == -1)
+                  throw new IllegalStateException("remove Error");
+              MyVector.this.remove(lastRet);
+              if (lastRet < cursor)
+                  cursor--;
+              lastRet = -1;
+        }
+    } // private class Itr
 }
 public class MyVectorEx1 {
     public static void main(String[] args) {
@@ -329,33 +407,17 @@ public class MyVectorEx1 {
         v.add("BBB");
         v.add("CCC");
         v.add("DDD");
-        v.add(2,"EEE");
 
-        Object[] objArr = v.toArray();
+        Iterator it = v.iterator();
 
-        for(int i=0; i < objArr.length;i++) {
-            System.out.print(v.get(i)+",");
+        while(it.hasNext()) {
+            Object obj = it.next();
+            System.out.println(obj);
+
+            if(obj.equals("BBB"))
+                it.remove();
         }
-        System.out.println();
 
-        System.out.println("size:"+v.size());
-        System.out.println("capacity:"+v.capacity());
-        System.out.println("isEmpty:"+v.isEmpty());
-        System.out.println();
-
-        v.remove(1); // BBB를 삭제
-        v.remove("CCC");
-
-        System.out.println(v); // System.out.println(v.toString());
-        System.out.println("size:"+v.size());
-        System.out.println("capacity:"+v.capacity());
-        System.out.println("isEmpty:"+v.isEmpty());
-        System.out.println();
-
-        v.clear();
         System.out.println(v);
-        System.out.println("size:"+v.size());
-        System.out.println("capacity:"+v.capacity());
-        System.out.println("isEmpty:"+v.isEmpty());
     }
 }
