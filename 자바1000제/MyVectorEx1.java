@@ -13,6 +13,12 @@ package 자바1000제;
  * boolean add(Object obj) - 객체배열에 객체(obj)를 저장한다.
  * Object get(int index) - 객체배열에 저장된, index번쨰의 객체를 반환한다.
  * Object set(int index, Object obj) - 객체배열의 index번쨰의 위치에 객체(obj)를 저장하고 , 기존의 객체를 반환한다.
+ *[문제3]
+ * boolean contains(Object obj) - 지정된 객체(obj)가 객체배열에 존재하는지 확인한다. 있으면 true, 없으면 false
+ * int indexOf(Object obj) - 지정된 객체의 위치(index)를 찾아서 반환한다. 객체배열에 없으면 -1을 반환(객체배열의 첫번쨰 요소부터 찾기 시작한다.)
+ * int lastIndexOf(Object obj) - 지정된 객체의 위치(index)를 찾아서 반환한다. 객체배열에 없으면 -1을 반환.(객체배열의 마지막 요소부터 역순으로 찾기 시작한다.)
+ * int idexOf(Object obj, int index) - 지정된 객체를 지정한 위치(index)부터 찾기 시작한다. 객체배열에 없으면 -1을 반환
+ * int lastIndexOf(Object obj, int index)- 지정된 객체를 지정한 위치(index)부터 찾기 시작한다. 객체배열에 없으면 -1을 반환. (역순으로 찾기 시작한다.)
  */
 class MyVector {
     protected Object[] data = null; //객체를 담기 위한 객체배열을 선언한다.
@@ -112,7 +118,7 @@ class MyVector {
 
     public Object get(int index) {
         if (index < 0 || index > size)
-            throw new IndexOutOfBoundsException("범위를 벗어났습니다.")
+            throw new IndexOutOfBoundsException("범위를 벗어났습니다.");
         return data[index];
     }
 
@@ -130,6 +136,85 @@ class MyVector {
         data[index] = obj;
         return tmp;
     }
+
+    public int indexOf(Object obj, int index) {
+        /*
+             다음의 코드를 완성하세요.
+             1. 넘겨받은 객체(obj)가 null이면,
+                1.1 반복문을 이용해서 객체배열(data)에서 null인 것을 찾아서 그 위치를 반환한다.
+                     (검색순서는 index부터 시작해서 증가하는 방향)
+             2. 넘겨받은 객체(obj)가 null이 아닌 경우에는
+                2.1 equals를 이용해서 같은 객체가 있는지 찾아서 그 위치를 반환한다.
+                     (검색순서는 index부터 시작해서 증가하는 방향)
+             3. 못찾으면 -1을 반환한다.
+        */
+        if (obj == null) {
+            for (int i=index; i<data.length; i++) {
+                if (data[i] == null)
+                    return i;
+            }
+        }else {
+            for (int i=index; i<data.length; i++) {
+                if (data[i].equals(obj))
+                    return i;
+            }
+        }
+        return -1;
+    }
+
+    public int lastIndexOf(Object obj, int index) {
+        /*
+            다음의 코드를 완성하세요.
+             1. index의 값이 size보다 같거나 크면, IndexOutOfBoundsException을 발생시킨다.
+             2. 넘겨받은 객체(obj)가 null이면,
+                2.1 반복문을 이용해서 객체배열(data)에서 null인 것을 찾아서 그 위치를 반환한다.
+                     (검색순서는 index부터 시작해서, index값을 감소시켜서 객체배열의 0번째까지 )
+             3. 넘겨받은 객체(obj)가 null이 아닌 경우에는
+                3.1 equals를 이용해서 같은 객체가 있는지 찾아서 그 위치를 반환한다.
+                     (검색순서는 index부터 시작해서, index값을 감소시켜서 객체배열의 0번째까지 )
+             4. 못찾으면 -1을 반환한다.
+        */
+        if (index > size)
+            throw new IndexOutOfBoundsException("index가 size보다 큽니다.");
+        if (obj == null) {
+            for (int i = index; i>0; i--) {
+                if (data[i] == null)
+                    return i;
+            }
+        }else {
+            for (int i = index; i>0; i--) {
+                if (data[i].equals(obj))
+                    return i;
+            }
+        }
+        return -1;
+    }
+
+    public boolean contains(Object obj) {
+       /*
+          코드를완성하세요. indexOf(Object obj, int index)를 사용
+       */
+        if (indexOf(obj,0) == -1)
+            return false;
+        else
+            return true;
+    }
+
+    public int indexOf(Object obj) {
+        // 찾기 시작할 위치(index)를 지정하지 않으면 처음부터 찾는다.
+       /*
+          코드를완성하세요. indexOf(Object obj, int index)를 사용
+       */
+        return indexOf(obj,0);
+    }
+
+    public int lastIndexOf(Object obj) {
+        // 찾기 시작할 위치(index)를 지정하지 않으면 끝부터 찾는다.
+       /*
+          코드를완성하세요. lastIndexOf(Object obj, int index)를 사용
+       */
+       return lastIndexOf(obj,data.length-1);
+    }
 }
 public class MyVectorEx1 {
     public static void main(String[] args) {
@@ -138,19 +223,14 @@ public class MyVectorEx1 {
         v.add("AAA");
         v.add("BBB");
         v.add("CCC");
+        v.add("BBB");
 
         for (int i=0; i < v.size(); i++) {
-            System.out.println(v.get(i));
+            System.out.println(i+":"+v.get(i));
         }
 
-        System.out.println("size: " + v.size());
-        System.out.println("capacity: " + v.capacity());
-        System.out.println("isEmpty: " + v.isEmpty());
-
-        v.set(0,"aaa");
-
-        for (int i=0; i<v.size(); i++) {
-            System.out.println(v.get(i));
-        }
+        System.out.println("indexOf BBB: " + v.indexOf("BBB"));
+        System.out.println("lastIndexOf BBB: " + v.lastIndexOf("BBB"));
+        System.out.println("contains BBB: " + v.contains("BBB"));
     }
 }
