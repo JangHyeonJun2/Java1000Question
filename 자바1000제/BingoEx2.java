@@ -108,10 +108,18 @@ public class BingoEx2 extends Frame {
                 }
             }
 
-            if (aroCnt == 5)
+            if (aroCnt == 5) {
                 bingoCnt++;
-            if (seroCnt == 5)
+                for (int k=0; k<SIZE; k++) {
+                    btnArr[(i*5)+k].setBackground(Color.GREEN);
+                }
+            }
+            if (seroCnt == 5) {
                 bingoCnt++;
+                for (int k=0; k<SIZE; k++) {
+                    btnArr[(k*5)+i].setBackground(Color.GREEN);
+                }
+            }
 
             //가로 & 세로 개수를 다시 0으로 초기화!
             aroCnt = 0;
@@ -126,10 +134,18 @@ public class BingoEx2 extends Frame {
             }
         }
 
-        if (crossCnt1 == 5)
+        if (crossCnt1 == 5) {
             bingoCnt++;
-        if (crossCnt2 == 5)
+            for (int k=0; k<SIZE; k++) {
+                btnArr[(k*5)+k].setBackground(Color.GREEN);
+            }
+        }
+        if (crossCnt2 == 5) {
             bingoCnt++;
+            for (int k=0; k<SIZE; k++) {
+                btnArr[((4-k)*5)+k].setBackground(Color.GREEN);
+            }
+        }
 
         if (bingoCnt == SIZE || bingoCnt > SIZE)
             return true;
